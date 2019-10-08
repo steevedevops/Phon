@@ -1,0 +1,12 @@
+   text
+   LDR a
+   AND b
+   STR b
+   NOT 
+   STR c
+   HLT
+
+   data
+a: byte 109
+b: byte 31
+c: byte 0
