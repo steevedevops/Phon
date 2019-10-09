@@ -28,7 +28,6 @@ class GenericAplication():
             return lst
         return text
 
-
     def __getRotulo(self, name, objRot):
         for rot in objRot:
             if name == rot['rotulo']:
@@ -109,54 +108,38 @@ class GenericAplication():
 
     def programaBinaria(self):        
         simbolData = []
-        instrucoes = []
-        passo = 0
+        instrucoes = []        
+        endAtual = 0
 
         fileData = open(self.arquivo, 'r')
         lines  = fileData.readlines()
         
         for x in range(2):
-            if x==0:
-                # Primeira pasagem pegando os rotulos e o endereço da memoria
-
-                for l in lines: 
-                    if (len(l.split()) == 1) and (l.split()[0] == 'text') and (endAtual == 0):
-                        endAtual = 0                         
-                    if (len(l.split()) == 1) and (l.split()[0] == 'data'):
-                        endAtual = 128 
-
-                    if (len(l.split()) == 1) and (l.split()[0] != 'text') and (l.split()[0] != 'data'):
-                        print(endAtual,' - ',l.split()[0])
-                        if endAtual >= 128:
-                            endAtual += 1;
+            if x==0: # Primeira pasagem pegando os rotulos e o endereço da memoria                
+                for l in lines:                                                            
+                    for g in l.split():                        
+                        result = re.search(':', g)                                            
+                        if result != None:
+                            print(endAtual,' Rotulos '+' - '+self.__splitGetData(g,':',0))
                         else:
-                            endAtual += 2;
+                          print(endAtual,' Bytes '+' - '+g)
 
+                        if g == 'text':                        
+                            endAtual = 0
+                        elif g == 'data':
+                            endAtual = 128
 
-                    elif (len(l.split()) == 1) and (l.split()[0] == 'data'):
-                        endAtual = 128
-                    
-                    elif (len(l.split()) > 1):                                                                    
-                        result = re.search(':', l)
-                        if result != None:                            
-                            print(endAtual,' - ',self.__splitGetData(l,':',0))                      
-                            simbolData.append({
-                                "rotulo" : self.__splitGetData(l,':',0),
-                                "end" : 5
-                            })
-                        else:
-                            for g in l.split():
-                                print(endAtual,' - ',g)
-                                if endAtual >= 128:
-                                    endAtual += 1;
-                                else:
-                                    endAtual += 2;
-                            # print(l.split())
-                fileData.close()                
-                # print(self.__getRotulo('loop', simbolData))            
-                print(self.__conjInstrucoes('STR'))                
-            else: 
-                # Conteudo da segunda pasagem no codigo                
+                        endAtual += 1
+
+                    # if result != None:                        
+                    #     # print(' Rotulos '+' - '+self.__splitGetData(l,':',0))                      
+                    #     simbolData.append({
+                    #         "rotulo" : self.__splitGetData(l,':',0),
+                    #         "end" : 5
+                    #     })                    
+                        # print(l.split())           
+                        
+            else:                
                 pass
 
 
