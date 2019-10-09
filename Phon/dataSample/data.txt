@@ -1,12 +1,11 @@
-   text
-   LDR a
-   AND b
-   STR b
-   NOT 
-   STR c
-   HLT
+      text
+loop: LDR i
+      SUB v5
+      JEQ fim
+      STR i
+      JMP loop       
+fim:  HLT
 
-   data
-a: byte 109
-b: byte 31
-c: byte 0
+      data
+i:    byte 50
+v5:   byte 5
