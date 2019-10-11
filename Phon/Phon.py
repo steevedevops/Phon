@@ -137,10 +137,26 @@ class GenericAplication():
                         if g == 'data':                                    
                             endAtual = 128
                                                                                                 
-                print(simbolData)                                  
+                # print(simbolData)                                  
                                         
-            else:                
-                pass
+            else: # Segunda pasagem pasagem pegando os rotulos e o endereço da memoria                               
+                endAtual = 0
+                for l in lines:                                                            
+                    for g in l.split():                        
+                        result = re.search(':', g)                                            
+                        if result == None:                                                    
+
+                            if g != 'text' and g != 'byte' and g != 'data':      
+                                print(endAtual,' Bytes '+' - '+g)                                            
+
+
+                            if g != 'text' and g != 'byte':  
+                                endAtual += 1
+                                if g == 'data':                                    
+                                    endAtual = 128
+
+
+                        
 
 
 if __name__=='__main__':
