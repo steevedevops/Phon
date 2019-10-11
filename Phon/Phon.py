@@ -99,6 +99,9 @@ class GenericAplication():
             'opcode' : '150',
             'name': 'HLT',
             'tamanho': 1
+        },{            
+            'name': 'byte',
+            'tamanho': 1
         }]
 
         for inst in conjinstru:            
@@ -120,25 +123,22 @@ class GenericAplication():
                     for g in l.split():                        
                         result = re.search(':', g)                                            
                         if result != None:
-                            print(endAtual,' Rotulos '+' - '+self.__splitGetData(g,':',0))
-                        else:
-                          print(endAtual,' Bytes '+' - '+g)
-
-                        if g == 'text':                        
-                            endAtual = 0
-                        elif g == 'data':
-                            endAtual = 128
-
-                        endAtual += 1
-
-                    # if result != None:                        
-                    #     # print(' Rotulos '+' - '+self.__splitGetData(l,':',0))                      
-                    #     simbolData.append({
-                    #         "rotulo" : self.__splitGetData(l,':',0),
-                    #         "end" : 5
-                    #     })                    
-                        # print(l.split())           
+                            # print(endAtual,' Rotulos '+' - '+self.__splitGetData(g,':',0))
+                            simbolData.append({
+                                "rotulo" : self.__splitGetData(l,':',0),
+                                "end" : endAtual
+                            })
                         
+                        if self.__conjInstrucoes(g.strip()) != None:
+                            # print(endAtual,' - ',g)
+                            if g != 'text':                            
+                                endAtual += self.__conjInstrucoes(g.strip())['tamanho']                                                   
+
+                        if g == 'data':                                    
+                            endAtual = 128
+                                                                                                
+                print(simbolData)                                  
+                                        
             else:                
                 pass
 
