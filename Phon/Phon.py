@@ -31,7 +31,7 @@ class GenericAplication():
     def __getRotulo(self, name, objRot):
         for rot in objRot:
             if name == rot['rotulo']:
-                return rot['rotulo']                           
+                return rot                           
         return 'No Existe este rotulo'
 
     def __conjInstrucoes(self, name):        
@@ -76,27 +76,27 @@ class GenericAplication():
             'name': 'OR',
             'tamanho': 2
         },{
-            'opcode' : '100',# de A0  para cima
+            'opcode' : 'A0',
             'name': 'XOR',
             'tamanho': 2
         },{
-            'opcode' : '110',
+            'opcode' : 'B0',
             'name': 'JMP',
             'tamanho': 2
         },{
-            'opcode' : '120',
+            'opcode' : 'C0',
             'name': 'JEQ',
             'tamanho': 2
         },{
-            'opcode' : '130',
+            'opcode' : 'D0',
             'name': 'JG',
             'tamanho': 2
         },{
-            'opcode' : '140',
+            'opcode' : 'E0',
             'name': 'JL',
             'tamanho': 2
         },{
-            'opcode' : '150',
+            'opcode' : 'F0',
             'name': 'HLT',
             'tamanho': 1
         },{            
@@ -109,9 +109,10 @@ class GenericAplication():
                 return inst
         return None
 
+
     def programaBinaria(self):        
         simbolData = []
-        instrucoes = []        
+        programBinary = []        
         endAtual = 0
 
         fileData = open(self.arquivo, 'r')
@@ -132,12 +133,11 @@ class GenericAplication():
                         if self.__conjInstrucoes(g.strip()) != None:
                             # print(endAtual,' - ',g)
                             if g != 'text':                            
-                                endAtual += self.__conjInstrucoes(g.strip())['tamanho']                                                   
+                                endAtual += self.__conjInstrucoes(g.strip())['tamanho']
 
                         if g == 'data':                                    
-                            endAtual = 128
-                                                                                                
-                # print(simbolData)                                  
+                            endAtual = 128                                                                                            
+                # print(simbolData)
                                         
             else: # Segunda pasagem pasagem pegando os rotulos e o endereço da memoria                               
                 endAtual = 0
@@ -145,18 +145,44 @@ class GenericAplication():
                     for g in l.split():                        
                         result = re.search(':', g)                                            
                         if result == None:                                                    
-
-                            if g != 'text' and g != 'byte' and g != 'data':      
-                                print(endAtual,' Bytes '+' - '+g)                                            
-
-
+                            if g != 'text' and g != 'byte' and g != 'data':                                                                               
+                                if self.__conjInstrucoes(g.strip()) != None:
+                                    # print(endAtual,' Intrucoes ',self.__conjInstrucoes(g.strip()))                                    
+                                    programBinary.append({
+                                        'end' : endAtual,
+                                        'conteudo' : bin(int(self.__conjInstrucoes(g.strip())['opcode'], 16))[2:].zfill(8)                                  
+                                    })
+                                elif endAtual < 128 and self.__conjInstrucoes(g.strip()) == None:
+                                    endRot = self.__getRotulo(g.strip(),simbolData)['end']
+                                    # print(endAtual,' Operando ',endRot)
+                                    programBinary.append({
+                                        'end' : endAtual,
+                                        'conteudo' : bin(int(str(endRot), 16))[2:].zfill(8)                                  
+                                    })                                                                                                        
+                                else:
+                                    # print(endAtual,' Intrucoes ',g)
+                                    programBinary.append({
+                                        'end' : endAtual,
+                                        'conteudo' : bin(int(g, 16))[2:].zfill(8)                                  
+                                    })                                                                    
+                                    
+                                                                
                             if g != 'text' and g != 'byte':  
                                 endAtual += 1
                                 if g == 'data':                                    
                                     endAtual = 128
 
 
-                        
+
+                arquivo = open("data.bin", "wb")                
+                for pb in programBinary:
+                    # print(pb['end'],'  ',pb['conteudo'])
+                    arquivo.write(str(pb['end']))
+                    arquivo.write(' ')
+                    arquivo.write(pb['conteudo'])
+                    arquivo.write('\n')
+                arquivo.close()                
+
 
 
 if __name__=='__main__':
