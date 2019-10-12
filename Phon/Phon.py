@@ -7,8 +7,9 @@ import re
 import argparse
 
 class GenericAplication():
-    def __init__(self, arquivo):
+    def __init__(self, arquivo, namearq):
         self.arquivo = arquivo
+        self.namearq = namearq
 
     def __splitGetData(self, text, by, index):
         if not type(text) == str and hasattr(text, 'text'):
@@ -174,24 +175,61 @@ class GenericAplication():
 
 
 
-                arquivo = open("data.bin", "wb")                
+                arq = open(self.namearq+'.bin', "wb")     
+
+                print('''
+                                        .,,uod8B8bou,,.
+                                ..,uod8BBBBBBBBBBBBBBBBRPFT?l!i:.
+                            ,=m8BBBBBBBBBBBBBBBRPFT?!||||||||||||||
+                            !...:!TVBBBRPFT||||||||||!!^^""'   ||||
+                            !.......:!?|||||!!^^""'            ||||
+                            !.........||||                     ||||
+                            !.........||||  ##                 ||||
+                            !.........||||                     ||||
+                            !.........||||       SUCCESS       ||||
+                            !.........||||                     ||||
+                            !.........||||                     ||||
+                            `.........||||                    ,||||
+                            .;.......||||               _.-!!|||||
+                    .,uodWBBBBb.....||||       _.-!!|||||||||!:'
+                    !YBBBBBBBBBBBBBBb..!|||:..-!!|||||||!iof68BBBBBb....
+                    !..YBBBBBBBBBBBBBBb!!||||||||!iof68BBBBBBRPFT?!::   `.
+                    !....YBBBBBBBBBBBBBBbaaitf68BBBBBBRPFT?!:::::::::     `.
+                    !......YBBBBBBBBBBBBBBBBBBBRPFT?!::::::;:!^"`;:::       `.
+                    !........YBBBBBBBBBBRPFT?!::::::::::^''...::::::;         iBBbo.
+                    `..........YBRPFT?!::::::::::::::::::::::::;iof68bo.      WBBBBbo.
+                    `..........:::::::::::::::::::::::;iof688888888888b.     `YBBBP^'
+                        `........::::::::::::::::;iof688888888888888888888b.     `
+                        `......:::::::::;iof688888888888888888888888888888b.
+                            `....:::;iof688888888888888888888888888888888899fT!
+                            `..::!8888888888888888888888888888888899fT|!^"'
+                                `' !!988888888888888888888888899fT|!^"'
+                                    `!!8888888888888888899fT|!^"'
+                                    `!988888888899fT|!^"'
+                                        `!9899fT|!^"'
+                                        `!^"'
+
+            [============= Asambly to PH1 Script [v.1.0.0] - By Steeve ================]\n''')
+
+
+
                 for pb in programBinary:
                     # print(pb['end'],'  ',pb['conteudo'])
-                    arquivo.write(str(pb['end']))
-                    arquivo.write(' ')
-                    arquivo.write(pb['conteudo'])
-                    arquivo.write('\n')
-                arquivo.close()                
-
-
+                    arq.write(str(pb['end']))
+                    arq.write(' ')
+                    arq.write(pb['conteudo'])
+                    arq.write('\n')
+                arq.close()                
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--arq', required=True, help='ASAMBLY file with data')
+    parser.add_argument('--arq', required=True, help='ASAMBLY FILE WITH DATA')
+    parser.add_argument('--o', required=True, help='NAME OF OUTPUT FILE')
 
     args = parser.parse_args()
-    GenericAplication(arquivo=args.arq).programaBinaria()
+    GenericAplication(arquivo=args.arq, namearq=args.o).programaBinaria()
 
-    # Example
-    # python Phon.py --arq data.txt
-# print(len(l.split()),' - ',l.split())                                        
+    ''' Usability here
+        Example
+        python Phon.py --arq data.txt
+    '''
