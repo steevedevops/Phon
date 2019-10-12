@@ -157,13 +157,13 @@ class GenericAplication():
                                     # print(endAtual,' Operando ',endRot)
                                     programBinary.append({
                                         'end' : endAtual,
-                                        'conteudo' : bin(int(str(endRot), 16))[2:].zfill(8)                                  
+                                        'conteudo' : bin(endRot)[2:].zfill(8)                                  
                                     })                                                                                                        
                                 else:
-                                    # print(endAtual,' Intrucoes ',g)
+                                    # print(endAtual,' Intrucoes ',g)                                    
                                     programBinary.append({
                                         'end' : endAtual,
-                                        'conteudo' : bin(int(g, 16))[2:].zfill(8)                                  
+                                        'conteudo' : bin(int(g))[2:].zfill(8)                                  
                                     })                                                                    
                                     
                                                                 
