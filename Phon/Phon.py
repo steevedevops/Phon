@@ -115,6 +115,7 @@ class GenericAplication():
         simbolData = []
         programBinary = []        
         endAtual = 0
+        endAtualFinal = 0
 
         fileData = open(self.arquivo, 'r')
         lines  = fileData.readlines()
@@ -166,16 +167,23 @@ class GenericAplication():
                                         'end' : endAtual,
                                         'conteudo' : bin(int(g))[2:].zfill(8)                                  
                                     })                                                                    
-                                    
-                                                                
+
+                                endAtualFinal = endAtual;
+                                        
                             if g != 'text' and g != 'byte':  
                                 endAtual += 1
                                 if g == 'data':                                    
                                     endAtual = 128
+                                
+                for i in range(256-len(programBinary)):
+                    endAtualFinal += 1
+                    programBinary.append({
+                        'end' : endAtualFinal,
+                        'conteudo' : bin(0)[2:].zfill(8)                                  
+                    })                                                                                         
+                    # print(endAtualFinal)                   
 
-
-
-                arq = open(self.namearq+'.bin', "wb")     
+                # arq = open(self.namearq+'.bin', "wb")     
 
                 print('''
                                         .,,uod8B8bou,,.
@@ -212,14 +220,17 @@ class GenericAplication():
             [============= Asambly to PH1 Script [v.1.0.0] - By Steeve ================]\n''')
 
 
+                # newFileBytes = []
+                # for byte in programBinary:                    
+                #     newFileBytes.append(byte['end'])
 
-                for pb in programBinary:
-                    # print(pb['end'],'  ',pb['conteudo'])
-                    arq.write(str(pb['end']))
-                    arq.write(' ')
-                    arq.write(pb['conteudo'])
-                    arq.write('\n')
-                arq.close()                
+                newFileBytes = [123, 3, 255, 0, 100]
+                # make file                
+                newFile = open(self.namearq+'.bin', "wb")     
+                # write to file 
+
+                newFileByteArray = bytearray(newFileBytes)
+                newFile.write(newFileByteArray)                
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
@@ -232,4 +243,6 @@ if __name__=='__main__':
     ''' Usability here
         Example
         python Phon.py --arq data.txt
+        para visualizar o arquivo
+        hexdump -C teste.bin 
     '''

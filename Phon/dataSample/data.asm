@@ -4,6 +4,7 @@ loop: LDR i
       JEQ fim
       STR i
       JMP loop       
+      SUB v5
 fim:  HLT
 
       data
