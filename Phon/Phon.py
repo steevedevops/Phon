@@ -220,6 +220,14 @@ class GenericAplication():
             [============= Asambly to PH1 Script [v.1.0.0] - By Steeve ================]\n''')
 
 
+                # for pb in programBinary:
+                #     # print(pb['end'],'  ',pb['conteudo'])
+                #     arq.write(str(pb['end']))
+                #     arq.write(' ')
+                #     arq.write(pb['conteudo'])
+                #     arq.write('\n')
+                # arq.close()  
+
                 # newFileBytes = []
                 # for byte in programBinary:                    
                 #     newFileBytes.append(byte['end'])
