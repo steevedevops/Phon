@@ -152,20 +152,20 @@ class GenericAplication():
                                     # print(endAtual,' Intrucoes ',self.__conjInstrucoes(g.strip()))                                    
                                     programBinary.append({
                                         'end' : endAtual,
-                                        'conteudo' : bin(int(self.__conjInstrucoes(g.strip())['opcode'], 16))[2:].zfill(8)                                  
+                                        'conteudo' : '{:0>8}'.format(bin(int(self.__conjInstrucoes(g.strip())['opcode'], 16))[2:])                                  
                                     })
                                 elif endAtual < 128 and self.__conjInstrucoes(g.strip()) == None:
                                     endRot = self.__getRotulo(g.strip(),simbolData)['end']
                                     # print(endAtual,' Operando ',endRot)
                                     programBinary.append({
                                         'end' : endAtual,
-                                        'conteudo' : bin(endRot)[2:].zfill(8)                                  
+                                        'conteudo' : '{:0>8}'.format(bin(endRot)[2:])                               
                                     })                                                                                                        
                                 else:
                                     # print(endAtual,' Intrucoes ',g)                                    
                                     programBinary.append({
-                                        'end' : endAtual,
-                                        'conteudo' : bin(int(g))[2:].zfill(8)                                  
+                                        'end' : endAtual,                                                                        
+                                        'conteudo' : '{:0>8}'.format(bin(int(g))[2:])                                 
                                     })                                                                    
 
                                 endAtualFinal = endAtual;
@@ -175,15 +175,13 @@ class GenericAplication():
                                 if g == 'data':                                    
                                     endAtual = 128
                                 
-                for i in range(256-len(programBinary)):
+                for i in range(141-len(programBinary)):
                     endAtualFinal += 1
                     programBinary.append({
                         'end' : endAtualFinal,
                         'conteudo' : bin(0)[2:].zfill(8)                                  
                     })                                                                                         
-                    # print(endAtualFinal)                   
-
-                # arq = open(self.namearq+'.bin', "wb")     
+                    # print(endAtualFinal)                                   
 
                 print('''
                                         .,,uod8B8bou,,.
@@ -219,14 +217,14 @@ class GenericAplication():
 
             [============= Asambly to PH1 Script [v.1.0.0] - By Steeve ================]\n''')
 
-
-                # for pb in programBinary:
-                #     # print(pb['end'],'  ',pb['conteudo'])
-                #     arq.write(str(pb['end']))
-                #     arq.write(' ')
-                #     arq.write(pb['conteudo'])
-                #     arq.write('\n')
-                # arq.close()  
+                arqv = open(self.namearq+'.bin', "wb")     
+                for pb in programBinary:
+                    print(pb['end'],'  ',pb['conteudo'])
+                    # arqv.write(str(pb['end']))
+                    # arqv.write(' ')
+                    # arqv.write(pb['conteudo'])
+                    # arqv.write('\n')
+                arqv.close()  
 
                 # newFileBytes = []
                 # for byte in programBinary:                    
