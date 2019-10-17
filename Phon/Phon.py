@@ -7,9 +7,12 @@ import re
 import argparse
 
 class GenericAplication():
-    def __init__(self, arquivo, namearq):
+    def __init__(self, arquivo, namearq, desplay ,binaryfile ,textfile):
         self.arquivo = arquivo
         self.namearq = namearq
+        self.desplay = desplay
+        self.binaryfile = binaryfile
+        self.textfile = textfile
 
     def __splitGetData(self, text, by, index):
         if not type(text) == str and hasattr(text, 'text'):
@@ -175,51 +178,53 @@ class GenericAplication():
                                 if g == 'data':                                    
                                     endAtual = 128
                                 
-                for i in range(141-len(programBinary)):
-                    endAtualFinal += 1
-                    programBinary.append({
-                        'end' : endAtualFinal,
-                        'conteudo' : bin(0)[2:].zfill(8)                                  
-                    })                                                                                         
+                # for i in range(141-len(programBinary)):
+                #     endAtualFinal += 1
+                #     programBinary.append({
+                #         'end' : endAtualFinal,
+                #         'conteudo' : bin(0)[2:].zfill(8)                                  
+                #     })                                                                                         
                     # print(endAtualFinal)                                   
 
-                print('''
-                                        .,,uod8B8bou,,.
-                                ..,uod8BBBBBBBBBBBBBBBBRPFT?l!i:.
-                            ,=m8BBBBBBBBBBBBBBBRPFT?!||||||||||||||
-                            !...:!TVBBBRPFT||||||||||!!^^""'   ||||
-                            !.......:!?|||||!!^^""'            ||||
-                            !.........||||                     ||||
-                            !.........||||  ##                 ||||
-                            !.........||||                     ||||
-                            !.........||||       SUCCESS       ||||
-                            !.........||||                     ||||
-                            !.........||||                     ||||
-                            `.........||||                    ,||||
-                            .;.......||||               _.-!!|||||
-                    .,uodWBBBBb.....||||       _.-!!|||||||||!:'
-                    !YBBBBBBBBBBBBBBb..!|||:..-!!|||||||!iof68BBBBBb....
-                    !..YBBBBBBBBBBBBBBb!!||||||||!iof68BBBBBBRPFT?!::   `.
-                    !....YBBBBBBBBBBBBBBbaaitf68BBBBBBRPFT?!:::::::::     `.
-                    !......YBBBBBBBBBBBBBBBBBBBRPFT?!::::::;:!^"`;:::       `.
-                    !........YBBBBBBBBBBRPFT?!::::::::::^''...::::::;         iBBbo.
-                    `..........YBRPFT?!::::::::::::::::::::::::;iof68bo.      WBBBBbo.
-                    `..........:::::::::::::::::::::::;iof688888888888b.     `YBBBP^'
-                        `........::::::::::::::::;iof688888888888888888888b.     `
-                        `......:::::::::;iof688888888888888888888888888888b.
-                            `....:::;iof688888888888888888888888888888888899fT!
-                            `..::!8888888888888888888888888888888899fT|!^"'
-                                `' !!988888888888888888888888899fT|!^"'
-                                    `!!8888888888888888899fT|!^"'
-                                    `!988888888899fT|!^"'
-                                        `!9899fT|!^"'
-                                        `!^"'
+            #     print('''
+            #                             .,,uod8B8bou,,.
+            #                     ..,uod8BBBBBBBBBBBBBBBBRPFT?l!i:.
+            #                 ,=m8BBBBBBBBBBBBBBBRPFT?!||||||||||||||
+            #                 !...:!TVBBBRPFT||||||||||!!^^""'   ||||
+            #                 !.......:!?|||||!!^^""'            ||||
+            #                 !.........||||                     ||||
+            #                 !.........||||  ##                 ||||
+            #                 !.........||||                     ||||
+            #                 !.........||||       SUCCESS       ||||
+            #                 !.........||||                     ||||
+            #                 !.........||||                     ||||
+            #                 `.........||||                    ,||||
+            #                 .;.......||||               _.-!!|||||
+            #         .,uodWBBBBb.....||||       _.-!!|||||||||!:'
+            #         !YBBBBBBBBBBBBBBb..!|||:..-!!|||||||!iof68BBBBBb....
+            #         !..YBBBBBBBBBBBBBBb!!||||||||!iof68BBBBBBRPFT?!::   `.
+            #         !....YBBBBBBBBBBBBBBbaaitf68BBBBBBRPFT?!:::::::::     `.
+            #         !......YBBBBBBBBBBBBBBBBBBBRPFT?!::::::;:!^"`;:::       `.
+            #         !........YBBBBBBBBBBRPFT?!::::::::::^''...::::::;         iBBbo.
+            #         `..........YBRPFT?!::::::::::::::::::::::::;iof68bo.      WBBBBbo.
+            #         `..........:::::::::::::::::::::::;iof688888888888b.     `YBBBP^'
+            #             `........::::::::::::::::;iof688888888888888888888b.     `
+            #             `......:::::::::;iof688888888888888888888888888888b.
+            #                 `....:::;iof688888888888888888888888888888888899fT!
+            #                 `..::!8888888888888888888888888888888899fT|!^"'
+            #                     `' !!988888888888888888888888899fT|!^"'
+            #                         `!!8888888888888888899fT|!^"'
+            #                         `!988888888899fT|!^"'
+            #                             `!9899fT|!^"'
+            #                             `!^"'
 
-            [============= Asambly to PH1 Script [v.1.0.0] - By Steeve ================]\n''')
+            # [============= Asambly to PH1 Script [v.1.0.0] - By Steeve ================]\n''')
 
                 arqv = open(self.namearq+'.bin', "wb")     
                 for pb in programBinary:
-                    print(pb['end'],'  ',pb['conteudo'])
+                                        
+                    if self.desplay:                    
+                        print(pb['end'],'  ',pb['conteudo'])
                     # arqv.write(str(pb['end']))
                     # arqv.write(' ')
                     # arqv.write(pb['conteudo'])
@@ -239,12 +244,16 @@ class GenericAplication():
                 newFile.write(newFileByteArray)                
 
 if __name__=='__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--arq', required=True, help='ASAMBLY FILE WITH DATA')
-    parser.add_argument('--o', required=True, help='NAME OF OUTPUT FILE')
+    parser = argparse.ArgumentParser(prog='PROG', usage='%(prog)s [options]')
+
+    parser.add_argument('-a', required=True, help='ASAMBLY FILE WITH DATA')
+    parser.add_argument('-o', required=True, help='NAME OF OUTPUT FILE')
+    parser.add_argument('-v', required=False, action='store_true', help='VIEW THE RESULT PH1')
+    parser.add_argument('-b', required=False, action='store_true', help='TYPE OUTPUT BINARY FILE')
+    parser.add_argument('-t', required=False, action='store_true', help='TYPE OUTPUT TEXT FILE')    
 
     args = parser.parse_args()
-    GenericAplication(arquivo=args.arq, namearq=args.o).programaBinaria()
+    GenericAplication(arquivo=args.a, namearq=args.o, desplay=args.v, binaryfile=args.b, textfile=args.t).programaBinaria()
 
     ''' Usability here
         Example
@@ -252,3 +261,6 @@ if __name__=='__main__':
         para visualizar o arquivo
         hexdump -C teste.bin 
     '''
+
+
+
