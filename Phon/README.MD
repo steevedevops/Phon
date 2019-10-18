@@ -36,3 +36,38 @@ _start:
 section	.data
     prompta	db 'Valor a: ', 0 ;  valor a  lindo desde un promt
     promptb	db 'Valor b: ', 0 ; valor b lido desde un  promt
+
+
+
+
+
+
+
+
+datalog
+rebeca
+jeanus
+progol
+fusiclip 
+alice ship
+ciao
+
+from beautifultable import BeautifulTable
+
+subtableb = BeautifulTable()
+subtable = BeautifulTable()
+subtable.column_headers = ["name", "rank", "gender"]
+subtable.append_row(["Jacob", 1, "boy"])
+subtable.append_row(["Isabella", 1, "girl"])
+
+subtableb.column_headers = ["name", "rank", "gender"]
+subtableb.append_row(["Jacob", 1, "boy"])
+subtableb.append_row(["Isabella", 1, "girl"])
+
+parent_table = BeautifulTable()
+parent_table.append_row(["Sample text", "Another sample text"])
+parent_table.append_row([subtable, subtableb])
+parent_table.set_style(BeautifulTable.STYLE_BOX_DOUBLED)
+subtable.set_style(BeautifulTable.STYLE_BOX_DOUBLED)
+subtableb.set_style(BeautifulTable.STYLE_BOX_DOUBLED)
+print(parent_table)

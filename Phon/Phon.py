@@ -5,6 +5,7 @@ __version__ = '1.0.0'
 import os
 import re
 import argparse
+from beautifultable import BeautifulTable as btft
 
 class GenericAplication():
     def __init__(self, arquivo, namearq, desplay ,binaryfile ,textfile):
@@ -37,6 +38,12 @@ class GenericAplication():
             if name == rot['rotulo']:
                 return rot                           
         return 'No Existe este rotulo'
+
+    def __getByte(self, end, obj):
+        for b in obj:                    
+            if b['end'] == end:
+                return True
+        return False                
 
     def __conjInstrucoes(self, name):        
         conjinstru = [{
@@ -114,6 +121,7 @@ class GenericAplication():
         return None
 
 
+
     def programaBinaria(self):        
         simbolData = []
         programBinary = []        
@@ -177,71 +185,96 @@ class GenericAplication():
                                 endAtual += 1
                                 if g == 'data':                                    
                                     endAtual = 128
+                # Saida no terminal
+                if self.desplay:
+                    tableSimbolData = btft()
+                    tableProgramBinary = btft()
+                    contentTable = btft()
+
+                    tableSimbolData.column_headers = ["Rotulo", "Endereço"]
+                    for sd in simbolData:
+                        tableSimbolData.append_row([sd['rotulo'], sd['end']])   
+
+                    tableProgramBinary.column_headers = ['Endereço', 'Conteudo']
+                    for pb in programBinary:
+                        content = '- '+pb['conteudo']+' -'                        
+                        tableProgramBinary.append_row([pb['end'],content])
+
+                    
+                    contentTable.append_row(["Tabela de Simbolo", "Programa Traduzido"])
+                    contentTable.append_row([tableSimbolData, tableProgramBinary])
+                    
+                    contentTable.set_style(btft.STYLE_BOX_DOUBLED)
+                    tableProgramBinary.set_style(btft.STYLE_BOX_DOUBLED)
+                    tableSimbolData.set_style(btft.STYLE_BOX_DOUBLED)
+
+                    print(contentTable)
+                    
+                
+                # Saida no arquivo text
+                if self.textfile and self.namearq: 
+                    tableSimbolData = btft()
+                    tableProgramBinary = btft()
+                    contentTable = btft()
+
+                    tableSimbolData.column_headers = ["Rotulo", "Endereço"]
+                    for sd in simbolData:
+                        tableSimbolData.append_row([sd['rotulo'], sd['end']])   
+
+                    tableProgramBinary.column_headers = ['Endereço', 'Conteudo']
+                    for pb in programBinary:
+                        content = '- '+pb['conteudo']+' -'                        
+                        tableProgramBinary.append_row([pb['end'],content])
+
+                    
+                    contentTable.append_row(["Tabela de Simbolo", "Programa Traduzido"])
+                    contentTable.append_row([tableSimbolData, tableProgramBinary])
+                    
+                    contentTable.set_style(btft.STYLE_BOX_DOUBLED)
+                    tableProgramBinary.set_style(btft.STYLE_BOX_DOUBLED)
+                    tableSimbolData.set_style(btft.STYLE_BOX_DOUBLED)
                                 
-                # for i in range(141-len(programBinary)):
-                #     endAtualFinal += 1
-                #     programBinary.append({
-                #         'end' : endAtualFinal,
-                #         'conteudo' : bin(0)[2:].zfill(8)                                  
-                #     })                                                                                         
-                    # print(endAtualFinal)                                   
+                    file = open(self.namearq+'.txt', "w")
+                    file.write(str(contentTable))                     
+                    file.close()
 
-            #     print('''
-            #                             .,,uod8B8bou,,.
-            #                     ..,uod8BBBBBBBBBBBBBBBBRPFT?l!i:.
-            #                 ,=m8BBBBBBBBBBBBBBBRPFT?!||||||||||||||
-            #                 !...:!TVBBBRPFT||||||||||!!^^""'   ||||
-            #                 !.......:!?|||||!!^^""'            ||||
-            #                 !.........||||                     ||||
-            #                 !.........||||  ##                 ||||
-            #                 !.........||||                     ||||
-            #                 !.........||||       SUCCESS       ||||
-            #                 !.........||||                     ||||
-            #                 !.........||||                     ||||
-            #                 `.........||||                    ,||||
-            #                 .;.......||||               _.-!!|||||
-            #         .,uodWBBBBb.....||||       _.-!!|||||||||!:'
-            #         !YBBBBBBBBBBBBBBb..!|||:..-!!|||||||!iof68BBBBBb....
-            #         !..YBBBBBBBBBBBBBBb!!||||||||!iof68BBBBBBRPFT?!::   `.
-            #         !....YBBBBBBBBBBBBBBbaaitf68BBBBBBRPFT?!:::::::::     `.
-            #         !......YBBBBBBBBBBBBBBBBBBBRPFT?!::::::;:!^"`;:::       `.
-            #         !........YBBBBBBBBBBRPFT?!::::::::::^''...::::::;         iBBbo.
-            #         `..........YBRPFT?!::::::::::::::::::::::::;iof68bo.      WBBBBbo.
-            #         `..........:::::::::::::::::::::::;iof688888888888b.     `YBBBP^'
-            #             `........::::::::::::::::;iof688888888888888888888b.     `
-            #             `......:::::::::;iof688888888888888888888888888888b.
-            #                 `....:::;iof688888888888888888888888888888888899fT!
-            #                 `..::!8888888888888888888888888888888899fT|!^"'
-            #                     `' !!988888888888888888888888899fT|!^"'
-            #                         `!!8888888888888888899fT|!^"'
-            #                         `!988888888899fT|!^"'
-            #                             `!9899fT|!^"'
-            #                             `!^"'
+                # Saida do arquivo binario
+                if self.binaryfile and self.namearq: 
+                    # newFileBytes = [123, 3, 255, 0, 100]
+                    newFileBytes = []
+                    achou = False
+                    dataEnd = 0
+                    
+                    for i in range(256):
+                        print(i)                                                                                
 
-            # [============= Asambly to PH1 Script [v.1.0.0] - By Steeve ================]\n''')
+                        if achou:
+                            print('Acho')
+                        else:
+                            print('nao Achou')                    
+                        # if achou:
+                        #     print('programing ---------- ',programBinary[i])
+                        # else:
+                        #     print('i 255 ',i)
+                        # if i < len(programBinary):                        
+                        #     print(programBinary[i])
+                        # else:
+                        #     print(i)
+                        
 
-                arqv = open(self.namearq+'.bin', "wb")     
-                for pb in programBinary:
-                                        
-                    if self.desplay:                    
-                        print(pb['end'],'  ',pb['conteudo'])
-                    # arqv.write(str(pb['end']))
-                    # arqv.write(' ')
-                    # arqv.write(pb['conteudo'])
-                    # arqv.write('\n')
-                arqv.close()  
 
-                # newFileBytes = []
-                # for byte in programBinary:                    
-                #     newFileBytes.append(byte['end'])
 
-                newFileBytes = [123, 3, 255, 0, 100]
-                # make file                
-                newFile = open(self.namearq+'.bin', "wb")     
-                # write to file 
+                    # for byte in programBinary:                                                                    
+                    #     # print(int(byte['conteudo'], 2))
+                    #     # newFileBytes.append(byte['conteudo'])                        
+                    #     print(byte['end'] , '  ' , byte['conteudo'])
+                    
 
-                newFileByteArray = bytearray(newFileBytes)
-                newFile.write(newFileByteArray)                
+                    # make file                
+                    # newFile = open(self.namearq+'.bin', "wb")     
+                    # write to file 
+                    # newFileByteArray = bytearray(newFileBytes)
+                    # newFile.write(newFileByteArray)                
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='PROG', usage='%(prog)s [options]')
@@ -260,6 +293,11 @@ if __name__=='__main__':
         python Phon.py --arq data.txt
         para visualizar o arquivo
         hexdump -C teste.bin 
+
+        python3 -m venv tes    
+        pip install beautifultable
+        https://github.com/pri22296/beautifultable
+        https://beautifultable.readthedocs.io/en/latest/quickstart.html
     '''
 
 
