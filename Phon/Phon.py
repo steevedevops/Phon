@@ -8,12 +8,13 @@ import argparse
 from beautifultable import BeautifulTable as btft
 
 class GenericAplication():
-    def __init__(self, arquivo, namearq, desplay ,binaryfile ,textfile):
+    def __init__(self, arquivo, namearq, desplay ,binaryfile ,textfile, compleout):
         self.arquivo = arquivo
         self.namearq = namearq
         self.desplay = desplay
         self.binaryfile = binaryfile
         self.textfile = textfile
+        self.compleout = compleout
 
     def __splitGetData(self, text, by, index):
         if not type(text) == str and hasattr(text, 'text'):
@@ -154,37 +155,43 @@ class GenericAplication():
                                         
             else: # Segunda pasagem pasagem pegando os rotulos e o endereço da memoria                               
                 endAtual = 0
-                for l in lines:                                                            
-                    for g in l.split():                        
-                        result = re.search(':', g)                                            
-                        if result == None:                                                    
-                            if g != 'text' and g != 'byte' and g != 'data':                                                                               
-                                if self.__conjInstrucoes(g.strip()) != None:
-                                    # print(endAtual,' Intrucoes ',self.__conjInstrucoes(g.strip()))                                    
-                                    programBinary.append({
-                                        'end' : endAtual,
-                                        'conteudo' : '{:0>8}'.format(bin(int(self.__conjInstrucoes(g.strip())['opcode'], 16))[2:])                                  
-                                    })
-                                elif endAtual < 128 and self.__conjInstrucoes(g.strip()) == None:
-                                    endRot = self.__getRotulo(g.strip(),simbolData)['end']
-                                    # print(endAtual,' Operando ',endRot)
-                                    programBinary.append({
-                                        'end' : endAtual,
-                                        'conteudo' : '{:0>8}'.format(bin(endRot)[2:])                               
-                                    })                                                                                                        
-                                else:
-                                    # print(endAtual,' Intrucoes ',g)                                    
-                                    programBinary.append({
-                                        'end' : endAtual,                                                                        
-                                        'conteudo' : '{:0>8}'.format(bin(int(g))[2:])                                 
-                                    })                                                                    
+                for l in lines:  
+                    # Complete output binary file
+                    if (self.binaryfile or self.compleout) and self.namearq:
+                        for g in range(256):
+                            print('Endereço da memoria e :', g)
+                    # Simple ouput file like the work we do in the classroom    
+                    else:                                                                           
+                        for g in l.split():
+                            result = re.search(':', g)                                            
+                            if result == None:                                                    
+                                if g != 'text' and g != 'byte' and g != 'data':                                                                               
+                                    if self.__conjInstrucoes(g.strip()) != None:
+                                        # print(endAtual,' Intrucoes ',self.__conjInstrucoes(g.strip()))                                    
+                                        programBinary.append({
+                                            'end' : endAtual,
+                                            'conteudo' : '{:0>8}'.format(bin(int(self.__conjInstrucoes(g.strip())['opcode'], 16))[2:])                                  
+                                        })
+                                    elif endAtual < 128 and self.__conjInstrucoes(g.strip()) == None:
+                                        endRot = self.__getRotulo(g.strip(),simbolData)['end']
+                                        # print(endAtual,' Operando ',endRot)
+                                        programBinary.append({
+                                            'end' : endAtual,
+                                            'conteudo' : '{:0>8}'.format(bin(endRot)[2:])                               
+                                        })                                                                                                        
+                                    else:
+                                        # print(endAtual,' Intrucoes ',g)                                    
+                                        programBinary.append({
+                                            'end' : endAtual,                                                                        
+                                            'conteudo' : '{:0>8}'.format(bin(int(g))[2:])                                 
+                                        })                                                                    
 
-                                endAtualFinal = endAtual;
-                                        
-                            if g != 'text' and g != 'byte':  
-                                endAtual += 1
-                                if g == 'data':                                    
-                                    endAtual = 128
+                                    endAtualFinal = endAtual;
+                                            
+                                if g != 'text' and g != 'byte':  
+                                    endAtual += 1
+                                    if g == 'data':                                    
+                                        endAtual = 128
                 # Saida no terminal
                 if self.desplay:
                     tableSimbolData = btft()
@@ -283,10 +290,11 @@ if __name__=='__main__':
     parser.add_argument('-o', required=True, help='NAME OF OUTPUT FILE')
     parser.add_argument('-v', required=False, action='store_true', help='VIEW THE RESULT PH1')
     parser.add_argument('-b', required=False, action='store_true', help='TYPE OUTPUT BINARY FILE')
-    parser.add_argument('-t', required=False, action='store_true', help='TYPE OUTPUT TEXT FILE')    
+    parser.add_argument('-t', required=False, action='store_true', help='TYPE OUTPUT TEXT FILE')
+    parser.add_argument('-C', required=False, action='store_true', help='COMPLETE OUTPUT BINARY FILE')
 
     args = parser.parse_args()
-    GenericAplication(arquivo=args.a, namearq=args.o, desplay=args.v, binaryfile=args.b, textfile=args.t).programaBinaria()
+    GenericAplication(arquivo=args.a, namearq=args.o, desplay=args.v, binaryfile=args.b, textfile=args.t, compleout=arq.C).programaBinaria()
 
     ''' Usability here
         Example
@@ -294,11 +302,8 @@ if __name__=='__main__':
         para visualizar o arquivo
         hexdump -C teste.bin 
 
-        python3 -m venv tes    
+        python3 -m venv tes
         pip install beautifultable
         https://github.com/pri22296/beautifultable
         https://beautifultable.readthedocs.io/en/latest/quickstart.html
     '''
-
-
-
