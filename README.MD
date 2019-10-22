@@ -33,14 +33,14 @@ Esta é uma aplicação chamada Phon, sua operação é traduzir o arquivo .asm 
 
 ## Uso
 Explicando un poco sobre os argumentos do aplicativo.
-|         | Descrição      |Requerido                          | Argumento                        |
-|---------|-------|-------------------------------|-----------------------------|
-|-a				|`'Caminho ou nome do arquivo .asm'`            | Sim    |nome_do_arquivo.asm       |
-|-o          |`Nome de Saída para o arquivo .bin ou txt`            |Sim            |nome_de_saida|
-|-v          |`Visualizar o resultado no terminal`|Não
-|-b          |`Tipo de saída en un arquivo binario`|Não|
-|-t          |`Tipo de saída en un arquivo txt`|Não
 
+|   | Descrição                                 |  Requerido | Argumento           |
+|---|-------------------------------------------|------------|---------------------|
+|-a |`'Caminho ou nome do arquivo .asm'`        |  Sim       | nome_do_arquivo.asm |
+|-o |`Nome de Saída para o arquivo .bin ou txt` |  Sim       | nome_de_saida       |
+|-v |`Visualizar o resultado no terminal`       |  Não       |                     |
+|-b |`Tipo de saída en un arquivo binario`      |  Não       |                     |
+|-t |`Tipo de saída en un arquivo txt`          |  Não       |                     |
 
 
 Para executar o aplicativo, você deve executar os seguintes comandos
