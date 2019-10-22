@@ -8,13 +8,12 @@ import argparse
 from beautifultable import BeautifulTable as btft
 
 class GenericAplication():
-    def __init__(self, arquivo, namearq, desplay ,binaryfile ,textfile, compleout):
+    def __init__(self, arquivo, namearq, desplay ,binaryfile ,textfile):
         self.arquivo = arquivo
         self.namearq = namearq
         self.desplay = desplay
         self.binaryfile = binaryfile
-        self.textfile = textfile
-        self.compleout = compleout
+        self.textfile = textfile        
 
     def __splitGetData(self, text, by, index):
         if not type(text) == str and hasattr(text, 'text'):
@@ -161,14 +160,12 @@ class GenericAplication():
                                 endAtual += self.__conjInstrucoes(g.strip())['tamanho']
 
                         if g == 'data':                                    
-                            endAtual = 128                                                                                            
-                # print(simbolData)
-                                        
+                            endAtual = 128                                        
             else: # Segunda pasagem pasagem pegando os rotulos e o endereço da memoria                               
                 endAtual = 0
 
                 # Complete output binary file                 
-                if (self.binaryfile or self.compleout) and self.namearq:
+                if (self.binaryfile) and self.namearq:
                     programBinaryCompl = []
                     afterHlt = []                    
                     count = 0
@@ -301,15 +298,14 @@ class GenericAplication():
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='PROG', usage='%(prog)s [options]')
 
-    parser.add_argument('-a', required=True, help='ASAMBLY FILE WITH DATA')
-    parser.add_argument('-o', required=True, help='NAME OF OUTPUT FILE')
-    parser.add_argument('-v', required=False, action='store_true', help='VIEW THE RESULT PH1')
-    parser.add_argument('-b', required=False, action='store_true', help='TYPE OUTPUT BINARY FILE')
-    parser.add_argument('-t', required=False, action='store_true', help='TYPE OUTPUT TEXT FILE')
-    parser.add_argument('-C', required=False, action='store_true', help='COMPLETE OUTPUT BINARY FILE')
+    parser.add_argument('-a', required=True, help='Caminho ou nome do arquivo .asm')
+    parser.add_argument('-o', required=True, help='Nome de Saída para o arquivo .bin ou txt')
+    parser.add_argument('-v', required=False, action='store_true', help='Visualizar o resultado no terminal')
+    parser.add_argument('-b', required=False, action='store_true', help='Tipo de saída en un arquivo binario')
+    parser.add_argument('-t', required=False, action='store_true', help='Tipo de saída en un arquivo txt')
 
     args = parser.parse_args()
-    GenericAplication(arquivo=args.a, namearq=args.o, desplay=args.v, binaryfile=args.b, textfile=args.t, compleout=args.C).programaBinaria()
+    GenericAplication(arquivo=args.a, namearq=args.o, desplay=args.v, binaryfile=args.b, textfile=args.t).programaBinaria()
 
     ''' Usability here
         Example
