@@ -129,6 +129,7 @@ class GenericAplication():
                 if (result == None) and (g != 'text' and g != 'byte' and g != 'data'): # somente faz se o result for null que 
                     #indica que nao e un rotulo e se nao for nem un campo de texto deixando asim 
                     # soamente as instrucoes e os valores das variaveis                                                            
+                    print(g)
                     progComple.append(g)                    
         return progComple
 
@@ -306,10 +307,3 @@ if __name__=='__main__':
 
     args = parser.parse_args()
     GenericAplication(arquivo=args.a, namearq=args.o, desplay=args.v, binaryfile=args.b, textfile=args.t).programaBinaria()
-
-    ''' Usability here
-        Example
-        python Phon.py --arq data.txt
-        para visualizar o arquivo
-        hexdump -C teste.bin         
-    '''

@@ -58,3 +58,8 @@ Para executar o aplicativo, você deve executar os seguintes comandos
 *	Se você quer visualizar o resultado na terminal
 
 		python Phon.py -a dataSample/data.asm -o data -v
+
+
+*   Comando extra para extrair ou leer arquivo binario en linux
+        
+        hexdump -C nome_do_arquivo.bin
