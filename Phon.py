@@ -129,7 +129,6 @@ class GenericAplication():
                 if (result == None) and (g != 'text' and g != 'byte' and g != 'data'): # somente faz se o result for null que 
                     #indica que nao e un rotulo e se nao for nem un campo de texto deixando asim 
                     # soamente as instrucoes e os valores das variaveis                                                            
-                    print(g)
                     progComple.append(g)                    
         return progComple
 
@@ -200,7 +199,7 @@ class GenericAplication():
                                     binary = '{:0>8}'.format(bin(int(0))[2:])
                                     decimalB = int(str(binary), 2)                                    
                                     programBinaryCompl.append(decimalB)
-                        print(programBinaryCompl)
+                        # print(programBinaryCompl)
                 # Simple ouput file like the work we do in the classroom    
                 else:                
                     for l in lines:                      
