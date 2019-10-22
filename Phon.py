@@ -122,6 +122,17 @@ class GenericAplication():
         return None
 
 
+    def __getJustInstructions(self, lines):  
+        progComple = []      
+        for l in lines: # percorre todas as linhas do arquivo
+            for g in l.split(): # Limpa os espaço de cada linha percorrido o mostra tudo um abaixo de outro
+                result = re.search(':', g)  
+                if (result == None) and (g != 'text' and g != 'byte' and g != 'data'): # somente faz se o result for null que 
+                    #indica que nao e un rotulo e se nao for nem un campo de texto deixando asim 
+                    # soamente as instrucoes e os valores das variaveis                                                            
+                    progComple.append(g)                    
+        return progComple
+
 
     def programaBinaria(self):        
         simbolData = []
@@ -155,17 +166,50 @@ class GenericAplication():
                                         
             else: # Segunda pasagem pasagem pegando os rotulos e o endereço da memoria                               
                 endAtual = 0
-                for l in lines:  
-                    # Complete output binary file
-                    if (self.binaryfile or self.compleout) and self.namearq:
-                        for g in range(256):
-                            print('Endereço da memoria e :', g)
-                    # Simple ouput file like the work we do in the classroom    
-                    else:                                                                           
+
+                # Complete output binary file                 
+                if (self.binaryfile or self.compleout) and self.namearq:
+                    programBinaryCompl = []
+                    afterHlt = []                    
+                    count = 0
+                    hltprogram = None
+                    if len(self.__getJustInstructions(lines)) > 0:                        
+                        for i in range(0, 258):                            
+                            if i <= (len(self.__getJustInstructions(lines))-1):                                
+                                justInstruc = self.__getJustInstructions(lines)[i]                                
+                                if (self.__conjInstrucoes(justInstruc) != None) and (hltprogram == None):                                                                        
+                                    binary = '{:0>8}'.format(bin(int(self.__conjInstrucoes(justInstruc)['opcode'], 16))[2:])
+                                    decimalB = int(str(binary), 2)                                    
+                                    programBinaryCompl.append(decimalB)
+
+                                elif (i < 128 and self.__conjInstrucoes(justInstruc) == None) and (hltprogram == None):
+                                    endRot = self.__getRotulo(justInstruc, simbolData)['end']
+                                    binary = '{:0>8}'.format(bin(endRot)[2:])
+                                    decimalB = int(str(binary), 2)
+                                    programBinaryCompl.append(decimalB)
+
+                                if justInstruc == 'HLT':                                    
+                                    hltprogram = justInstruc
+                                elif hltprogram != None:                                    
+                                    afterHlt.append(justInstruc)                                                                    
+                            else:   
+                                if i >= 128 and len(afterHlt)-1 >= count:
+                                    binary = '{:0>8}'.format(bin(int(afterHlt[count]))[2:])
+                                    decimalB = int(str(binary), 2)
+                                    programBinaryCompl.append(decimalB)
+                                    count += 1
+                                else:
+                                    binary = '{:0>8}'.format(bin(int(0))[2:])
+                                    decimalB = int(str(binary), 2)                                    
+                                    programBinaryCompl.append(decimalB)
+                        print(programBinaryCompl)
+                # Simple ouput file like the work we do in the classroom    
+                else:                
+                    for l in lines:                      
                         for g in l.split():
                             result = re.search(':', g)                                            
                             if result == None:                                                    
-                                if g != 'text' and g != 'byte' and g != 'data':                                                                               
+                                if g != 'text' and g != 'byte' and g != 'data':
                                     if self.__conjInstrucoes(g.strip()) != None:
                                         # print(endAtual,' Intrucoes ',self.__conjInstrucoes(g.strip()))                                    
                                         programBinary.append({
@@ -177,7 +221,7 @@ class GenericAplication():
                                         # print(endAtual,' Operando ',endRot)
                                         programBinary.append({
                                             'end' : endAtual,
-                                            'conteudo' : '{:0>8}'.format(bin(endRot)[2:])                               
+                                            'conteudo' : '{:0>8}'.format(bin(endRot)[2:])
                                         })                                                                                                        
                                     else:
                                         # print(endAtual,' Intrucoes ',g)                                    
@@ -246,42 +290,13 @@ class GenericAplication():
                     file.close()
 
                 # Saida do arquivo binario
-                if self.binaryfile and self.namearq: 
-                    # newFileBytes = [123, 3, 255, 0, 100]
-                    newFileBytes = []
-                    achou = False
-                    dataEnd = 0
-                    
-                    for i in range(256):
-                        print(i)                                                                                
-
-                        if achou:
-                            print('Acho')
-                        else:
-                            print('nao Achou')                    
-                        # if achou:
-                        #     print('programing ---------- ',programBinary[i])
-                        # else:
-                        #     print('i 255 ',i)
-                        # if i < len(programBinary):                        
-                        #     print(programBinary[i])
-                        # else:
-                        #     print(i)
-                        
-
-
-
-                    # for byte in programBinary:                                                                    
-                    #     # print(int(byte['conteudo'], 2))
-                    #     # newFileBytes.append(byte['conteudo'])                        
-                    #     print(byte['end'] , '  ' , byte['conteudo'])
-                    
-
+                if self.binaryfile and self.namearq:                     
                     # make file                
-                    # newFile = open(self.namearq+'.bin', "wb")     
+                    newFile = open(self.namearq+'.bin', "wb")     
+                    
+                    newFileByteArray = bytearray(programBinaryCompl)
                     # write to file 
-                    # newFileByteArray = bytearray(newFileBytes)
-                    # newFile.write(newFileByteArray)                
+                    newFile.write(newFileByteArray)                
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='PROG', usage='%(prog)s [options]')
@@ -294,16 +309,11 @@ if __name__=='__main__':
     parser.add_argument('-C', required=False, action='store_true', help='COMPLETE OUTPUT BINARY FILE')
 
     args = parser.parse_args()
-    GenericAplication(arquivo=args.a, namearq=args.o, desplay=args.v, binaryfile=args.b, textfile=args.t, compleout=arq.C).programaBinaria()
+    GenericAplication(arquivo=args.a, namearq=args.o, desplay=args.v, binaryfile=args.b, textfile=args.t, compleout=args.C).programaBinaria()
 
     ''' Usability here
         Example
         python Phon.py --arq data.txt
         para visualizar o arquivo
-        hexdump -C teste.bin 
-
-        python3 -m venv tes
-        pip install beautifultable
-        https://github.com/pri22296/beautifultable
-        https://beautifultable.readthedocs.io/en/latest/quickstart.html
+        hexdump -C teste.bin         
     '''
