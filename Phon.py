@@ -145,17 +145,16 @@ class GenericAplication():
         for x in range(2):
             if x==0: # Primeira pasagem pegando os rotulos e o endereço da memoria                
                 for l in lines:                                                            
-                    for g in l.split():                        
-                        result = re.search(':', g)                                            
-                        if result != None:
-                            # print(endAtual,' Rotulos '+' - '+self.__splitGetData(g,':',0))
+                    for g in l.split(): 
+                        # For que vai pegar tudo que for rotulo para executar o programa.                       
+                        result = re.search(':', g) # Tudo que for antes dos dois pontos são rotulos                                           
+                        if result != None:                            
                             simbolData.append({
                                 "rotulo" : self.__splitGetData(l,':',0),
                                 "end" : endAtual
                             })
                         
-                        if self.__conjInstrucoes(g.strip()) != None:
-                            # print(endAtual,' - ',g)
+                        if self.__conjInstrucoes(g.strip()) != None: # 
                             if g != 'text':                            
                                 endAtual += self.__conjInstrucoes(g.strip())['tamanho']
 
@@ -163,18 +162,17 @@ class GenericAplication():
                             endAtual = 128                                        
             else: # Segunda pasagem pasagem pegando os rotulos e o endereço da memoria                               
                 endAtual = 0
-
                 # Complete output binary file                 
                 if (self.binaryfile) and self.namearq:
-                    programBinaryCompl = []
-                    afterHlt = []                    
+                    programBinaryCompl = [] # Objeto que vai almacenar o programa completo com tudo os zeros para fazer a saida binaria
+                    afterHlt = [] # Almacena os resultado depois do camndo HLT pois e o comando que indica que o programa finalizo.
                     count = 0
                     hltprogram = None
                     if len(self.__getJustInstructions(lines)) > 0:                        
-                        for i in range(0, 258):                            
-                            if i <= (len(self.__getJustInstructions(lines))-1):                                
+                        for i in range(0, 258): # For que fara a inserção das 256 linha ou byte de saida no arquivo                           
+                            if i <= (len(self.__getJustInstructions(lines))-1): # Verifica se a quantidade de endereco atual para pegar o indice do endereco no objeto para evitar erro desnecesario de programacao
                                 justInstruc = self.__getJustInstructions(lines)[i]                                
-                                if (self.__conjInstrucoes(justInstruc) != None) and (hltprogram == None):                                                                        
+                                if (self.__conjInstrucoes(justInstruc) != None) and (hltprogram == None): # verifica se e uma instrução da tabela de instrucoes se for ele almacena o objeto de uma maneira diferente
                                     binary = '{:0>8}'.format(bin(int(self.__conjInstrucoes(justInstruc)['opcode'], 16))[2:])
                                     decimalB = int(str(binary), 2)                                    
                                     programBinaryCompl.append(decimalB)
@@ -266,10 +264,12 @@ class GenericAplication():
                     contentTable = btft()
 
                     tableSimbolData.column_headers = ["Rotulo", "Endereço"]
+                    
                     for sd in simbolData:
                         tableSimbolData.append_row([sd['rotulo'], sd['end']])   
 
                     tableProgramBinary.column_headers = ['Endereço', 'Conteudo']
+
                     for pb in programBinary:
                         content = '- '+pb['conteudo']+' -'                        
                         tableProgramBinary.append_row([pb['end'],content])
