@@ -121,6 +121,15 @@ class GenericAplication():
         return None
 
 
+    def __verificaRotuloExist(self, obj, name):
+        
+        for rot in obj:
+            print(rot['rotulo'], '  ',name)
+            if rot['rotulo'] == name:
+                return True
+        return False
+
+
     def __getJustInstructions(self, lines):  
         progComple = []      
         for l in lines: # percorre todas as linhas do arquivo
@@ -138,6 +147,7 @@ class GenericAplication():
         programBinary = []        
         endAtual = 0
         endAtualFinal = 0
+        rotuloRedefinido = False
 
         fileData = open(self.arquivo, 'r')
         lines  = fileData.readlines()
@@ -148,11 +158,17 @@ class GenericAplication():
                     for g in l.split(): 
                         # For que vai pegar tudo que for rotulo para executar o programa.                       
                         result = re.search(':', g) # Tudo que for antes dos dois pontos são rotulos                                           
-                        if result != None:                            
+                        if result != None: 
+                            if len(simbolData) > 0: 
+                                rotuloRedefinido                               
+                                if self.__verificaRotuloExist(simbolData, self.__splitGetData(l,':',0)):
+                                    print('Rotulo ja existe',self.__splitGetData(l,':',0))
+                            
                             simbolData.append({
                                 "rotulo" : self.__splitGetData(l,':',0),
                                 "end" : endAtual
                             })
+
                         
                         if self.__conjInstrucoes(g.strip()) != None: # 
                             if g != 'text':                            
@@ -161,7 +177,7 @@ class GenericAplication():
                         if g == 'data':                                    
                             endAtual = 128                                        
             else: # Segunda pasagem pasagem pegando os rotulos e o endereço da memoria                               
-                endAtual = 0
+                endAtual = 0                                
                 # Complete output binary file                 
                 if (self.binaryfile) and self.namearq:
                     programBinaryCompl = [] # Objeto que vai almacenar o programa completo com tudo os zeros para fazer a saida binaria

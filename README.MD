@@ -25,11 +25,12 @@ Esta é uma aplicação chamada Phon, sua operação é traduzir o arquivo .asm 
 *		pip install beautifultable
 
 * Se você quiser usar o ambiente separado, faça o seguinte.
-						
-*	   python3 -m venv env  ou virtualenv -p python3 env
-*	   source env/bin/activate
-*      pip install -r requirement.txt
 
+```						
+	   python3 -m venv env  ou  virtualenv -p python3 env	   
+	   source env/bin/activate
+       pip install -r requirement.txt
+```
 
 ## Uso
 Explicando un poco sobre os argumentos do aplicativo.
