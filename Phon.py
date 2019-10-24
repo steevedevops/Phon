@@ -121,11 +121,15 @@ class GenericAplication():
         return None
 
 
-    def __verificaRotuloExist(self, obj, name):
-        
-        for rot in obj:
-            print(rot['rotulo'], '  ',name)
+    def __verificaRotuloExist(self, obj, name):    
+        for rot in obj:            
             if rot['rotulo'] == name:
+                return True
+        return False
+
+    def __verificaInstrucoes(self, obj, name):    
+        for rot in obj:            
+            if rot['name'] == name:
                 return True
         return False
 
@@ -159,13 +163,14 @@ class GenericAplication():
                         # For que vai pegar tudo que for rotulo para executar o programa.                       
                         result = re.search(':', g) # Tudo que for antes dos dois pontos são rotulos                                           
                         if result != None: 
+                            rotu = self.__splitGetData(l,':',0)                                           
                             if len(simbolData) > 0: 
-                                rotuloRedefinido                               
-                                if self.__verificaRotuloExist(simbolData, self.__splitGetData(l,':',0)):
-                                    print('Rotulo ja existe',self.__splitGetData(l,':',0))
+                                if self.__verificaRotuloExist(simbolData, rotu):
+                                    rotuloRedefinido = self.__verificaRotuloExist(simbolData, rotu)
+                                    # print('Rotulo ja existe',self.__splitGetData(l,':',0))
                             
                             simbolData.append({
-                                "rotulo" : self.__splitGetData(l,':',0),
+                                "rotulo" : rotu,
                                 "end" : endAtual
                             })
 
@@ -177,139 +182,143 @@ class GenericAplication():
                         if g == 'data':                                    
                             endAtual = 128                                        
             else: # Segunda pasagem pasagem pegando os rotulos e o endereço da memoria                               
-                endAtual = 0                                
-                # Complete output binary file                 
-                if (self.binaryfile) and self.namearq:
-                    programBinaryCompl = [] # Objeto que vai almacenar o programa completo com tudo os zeros para fazer a saida binaria
-                    afterHlt = [] # Almacena os resultado depois do camndo HLT pois e o comando que indica que o programa finalizo.
-                    count = 0
-                    hltprogram = None
-                    if len(self.__getJustInstructions(lines)) > 0:                        
-                        for i in range(0, 258): # For que fara a inserção das 256 linha ou byte de saida no arquivo                           
-                            if i <= (len(self.__getJustInstructions(lines))-1): # Verifica se a quantidade de endereco atual para pegar o indice do endereco no objeto para evitar erro desnecesario de programacao
-                                justInstruc = self.__getJustInstructions(lines)[i]                                
-                                if (self.__conjInstrucoes(justInstruc) != None) and (hltprogram == None): # verifica se e uma instrução da tabela de instrucoes se for ele almacena o objeto de uma maneira diferente
-                                    binary = '{:0>8}'.format(bin(int(self.__conjInstrucoes(justInstruc)['opcode'], 16))[2:])
-                                    decimalB = int(str(binary), 2)                                    
-                                    programBinaryCompl.append(decimalB)
+                if rotuloRedefinido:
+                    print('*****************************')
+                    print('           ERROR!')
+                    print('   Rótulo "'+rotu+'" redefinido')
+                    print('*****************************')
+                else:
+                    endAtual = 0                                                
+                    # Complete output binary file                 
+                    if (self.binaryfile) and self.namearq:
+                        programBinaryCompl = [] # Objeto que vai almacenar o programa completo com tudo os zeros para fazer a saida binaria
+                        afterHlt = [] # Almacena os resultado depois do camndo HLT pois e o comando que indica que o programa finalizo.
+                        count = 0
+                        hltprogram = None
+                        if len(self.__getJustInstructions(lines)) > 0:                        
+                            for i in range(0, 258): # For que fara a inserção das 256 linha ou byte de saida no arquivo                           
+                                if i <= (len(self.__getJustInstructions(lines))-1): # Verifica se a quantidade de endereco atual para pegar o indice do endereco no objeto para evitar erro desnecesario de programacao
+                                    justInstruc = self.__getJustInstructions(lines)[i]                                
+                                    if (self.__conjInstrucoes(justInstruc) != None) and (hltprogram == None): # verifica se e uma instrução da tabela de instrucoes se for ele almacena o objeto de uma maneira diferente
+                                        binary = '{:0>8}'.format(bin(int(self.__conjInstrucoes(justInstruc)['opcode'], 16))[2:])
+                                        decimalB = int(str(binary), 2)                                    
+                                        programBinaryCompl.append(decimalB)
 
-                                elif (i < 128 and self.__conjInstrucoes(justInstruc) == None) and (hltprogram == None):
-                                    endRot = self.__getRotulo(justInstruc, simbolData)['end']
-                                    binary = '{:0>8}'.format(bin(endRot)[2:])
-                                    decimalB = int(str(binary), 2)
-                                    programBinaryCompl.append(decimalB)
+                                    elif (i < 128 and self.__conjInstrucoes(justInstruc) == None) and (hltprogram == None):
+                                        endRot = self.__getRotulo(justInstruc, simbolData)['end']
+                                        binary = '{:0>8}'.format(bin(endRot)[2:])
+                                        decimalB = int(str(binary), 2)
+                                        programBinaryCompl.append(decimalB)
 
-                                if justInstruc == 'HLT':                                    
-                                    hltprogram = justInstruc
-                                elif hltprogram != None:                                    
-                                    afterHlt.append(justInstruc)                                                                    
-                            else:   
-                                if i >= 128 and len(afterHlt)-1 >= count:
-                                    binary = '{:0>8}'.format(bin(int(afterHlt[count]))[2:])
-                                    decimalB = int(str(binary), 2)
-                                    programBinaryCompl.append(decimalB)
-                                    count += 1
-                                else:
-                                    binary = '{:0>8}'.format(bin(int(0))[2:])
-                                    decimalB = int(str(binary), 2)                                    
-                                    programBinaryCompl.append(decimalB)
-                        # print(programBinaryCompl)
-                # Simple ouput file like the work we do in the classroom    
-                else:                
-                    for l in lines:                      
-                        for g in l.split():
-                            result = re.search(':', g)                                            
-                            if result == None:                                                    
-                                if g != 'text' and g != 'byte' and g != 'data':
-                                    if self.__conjInstrucoes(g.strip()) != None:
-                                        # print(endAtual,' Intrucoes ',self.__conjInstrucoes(g.strip()))                                    
-                                        programBinary.append({
-                                            'end' : endAtual,
-                                            'conteudo' : '{:0>8}'.format(bin(int(self.__conjInstrucoes(g.strip())['opcode'], 16))[2:])                                  
-                                        })
-                                    elif endAtual < 128 and self.__conjInstrucoes(g.strip()) == None:
-                                        endRot = self.__getRotulo(g.strip(),simbolData)['end']
-                                        # print(endAtual,' Operando ',endRot)
-                                        programBinary.append({
-                                            'end' : endAtual,
-                                            'conteudo' : '{:0>8}'.format(bin(endRot)[2:])
-                                        })                                                                                                        
+                                    if justInstruc == 'HLT':                                    
+                                        hltprogram = justInstruc
+                                    elif hltprogram != None:                                    
+                                        afterHlt.append(justInstruc)                                                                    
+                                else:   
+                                    if i >= 128 and len(afterHlt)-1 >= count:
+                                        binary = '{:0>8}'.format(bin(int(afterHlt[count]))[2:])
+                                        decimalB = int(str(binary), 2)
+                                        programBinaryCompl.append(decimalB)
+                                        count += 1
                                     else:
-                                        # print(endAtual,' Intrucoes ',g)                                    
-                                        programBinary.append({
-                                            'end' : endAtual,                                                                        
-                                            'conteudo' : '{:0>8}'.format(bin(int(g))[2:])                                 
-                                        })                                                                    
+                                        binary = '{:0>8}'.format(bin(int(0))[2:])
+                                        decimalB = int(str(binary), 2)                                    
+                                        programBinaryCompl.append(decimalB)
+                            # print(programBinaryCompl)
+                    # Simple ouput file like the work we do in the classroom    
+                    else:                
+                        for l in lines:                      
+                            for g in l.split():
+                                result = re.search(':', g)                                            
+                                if result == None:                                                    
+                                    if g != 'text' and g != 'byte' and g != 'data':
+                                        if self.__conjInstrucoes(g.strip()) != None:                                            
+                                            programBinary.append({
+                                                'end' : endAtual,
+                                                'conteudo' : '{:0>8}'.format(bin(int(self.__conjInstrucoes(g.strip())['opcode'], 16))[2:])                                  
+                                            })
+                                        elif endAtual < 128 and self.__conjInstrucoes(g.strip()) == None:
+                                            endRot = self.__getRotulo(g.strip(),simbolData)['end']
+                                            # print(endAtual,' Operando ',endRot)
+                                            programBinary.append({
+                                                'end' : endAtual,
+                                                'conteudo' : '{:0>8}'.format(bin(endRot)[2:])
+                                            })                                                                                                        
+                                        else:
+                                            # print(endAtual,' Intrucoes ',g)                                    
+                                            programBinary.append({
+                                                'end' : endAtual,                                                                        
+                                                'conteudo' : '{:0>8}'.format(bin(int(g))[2:])                                 
+                                            })                                                                    
 
-                                    endAtualFinal = endAtual;
-                                            
-                                if g != 'text' and g != 'byte':  
-                                    endAtual += 1
-                                    if g == 'data':                                    
-                                        endAtual = 128
-                # Saida no terminal
-                if self.desplay:
-                    tableSimbolData = btft()
-                    tableProgramBinary = btft()
-                    contentTable = btft()
+                                        endAtualFinal = endAtual;
+                                                
+                                    if g != 'text' and g != 'byte':  
+                                        endAtual += 1
+                                        if g == 'data':                                    
+                                            endAtual = 128
+                    # Saida no terminal
+                    if self.desplay:
+                        tableSimbolData = btft()
+                        tableProgramBinary = btft()
+                        contentTable = btft()
 
-                    tableSimbolData.column_headers = ["Rotulo", "Endereço"]
-                    for sd in simbolData:
-                        tableSimbolData.append_row([sd['rotulo'], sd['end']])   
+                        tableSimbolData.column_headers = ["Rotulo", "Endereço"]
+                        for sd in simbolData:
+                            tableSimbolData.append_row([sd['rotulo'], sd['end']])   
 
-                    tableProgramBinary.column_headers = ['Endereço', 'Conteudo']
-                    for pb in programBinary:
-                        content = '- '+pb['conteudo']+' -'                        
-                        tableProgramBinary.append_row([pb['end'],content])
+                        tableProgramBinary.column_headers = ['Endereço', 'Conteudo']
+                        for pb in programBinary:
+                            content = '- '+pb['conteudo']+' -'                        
+                            tableProgramBinary.append_row([pb['end'],content])
 
-                    
-                    contentTable.append_row(["Tabela de Simbolo", "Programa Traduzido"])
-                    contentTable.append_row([tableSimbolData, tableProgramBinary])
-                    
-                    contentTable.set_style(btft.STYLE_BOX_DOUBLED)
-                    tableProgramBinary.set_style(btft.STYLE_BOX_DOUBLED)
-                    tableSimbolData.set_style(btft.STYLE_BOX_DOUBLED)
+                        
+                        contentTable.append_row(["Tabela de Simbolo", "Programa Traduzido"])
+                        contentTable.append_row([tableSimbolData, tableProgramBinary])
+                        
+                        contentTable.set_style(btft.STYLE_BOX_DOUBLED)
+                        tableProgramBinary.set_style(btft.STYLE_BOX_DOUBLED)
+                        tableSimbolData.set_style(btft.STYLE_BOX_DOUBLED)
 
-                    print(contentTable)
-                    
-                
-                # Saida no arquivo text
-                if self.textfile and self.namearq: 
-                    tableSimbolData = btft()
-                    tableProgramBinary = btft()
-                    contentTable = btft()
+                        print(contentTable)
+                         
+                    # Saida no arquivo text
+                    if self.textfile and self.namearq: 
+                        tableSimbolData = btft()
+                        tableProgramBinary = btft()
+                        contentTable = btft()
 
-                    tableSimbolData.column_headers = ["Rotulo", "Endereço"]
-                    
-                    for sd in simbolData:
-                        tableSimbolData.append_row([sd['rotulo'], sd['end']])   
+                        tableSimbolData.column_headers = ["Rotulo", "Endereço"]
+                        
+                        for sd in simbolData:
+                            tableSimbolData.append_row([sd['rotulo'], sd['end']])   
 
-                    tableProgramBinary.column_headers = ['Endereço', 'Conteudo']
+                        tableProgramBinary.column_headers = ['Endereço', 'Conteudo']
 
-                    for pb in programBinary:
-                        content = '- '+pb['conteudo']+' -'                        
-                        tableProgramBinary.append_row([pb['end'],content])
+                        for pb in programBinary:
+                            content = '- '+pb['conteudo']+' -'                        
+                            tableProgramBinary.append_row([pb['end'],content])
 
-                    
-                    contentTable.append_row(["Tabela de Simbolo", "Programa Traduzido"])
-                    contentTable.append_row([tableSimbolData, tableProgramBinary])
-                    
-                    contentTable.set_style(btft.STYLE_BOX_DOUBLED)
-                    tableProgramBinary.set_style(btft.STYLE_BOX_DOUBLED)
-                    tableSimbolData.set_style(btft.STYLE_BOX_DOUBLED)
-                                
-                    file = open(self.namearq+'.txt', "w")
-                    file.write(str(contentTable))                     
-                    file.close()
+                        
+                        contentTable.append_row(["Tabela de Simbolo", "Programa Traduzido"])
+                        contentTable.append_row([tableSimbolData, tableProgramBinary])
+                        
+                        contentTable.set_style(btft.STYLE_BOX_DOUBLED)
+                        tableProgramBinary.set_style(btft.STYLE_BOX_DOUBLED)
+                        tableSimbolData.set_style(btft.STYLE_BOX_DOUBLED)
+                                    
+                        file = open(self.namearq+'.txt', "w")
+                        file.write(str(contentTable))                     
+                        file.close()
 
-                # Saida do arquivo binario
-                if self.binaryfile and self.namearq:                     
-                    # make file                
-                    newFile = open(self.namearq+'.bin', "wb")     
-                    
-                    newFileByteArray = bytearray(programBinaryCompl)
-                    # write to file 
-                    newFile.write(newFileByteArray)                
+                    # Saida do arquivo binario
+                    if self.binaryfile and self.namearq:                     
+                        # make file                
+                        newFile = open(self.namearq+'.bin', "wb")     
+                        
+                        newFileByteArray = bytearray(programBinaryCompl)
+                        # write to file 
+                        newFile.write(newFileByteArray)                
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='PROG', usage='%(prog)s [options]')

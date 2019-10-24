@@ -64,3 +64,25 @@ Para executar o aplicativo, você deve executar os seguintes comandos
 *   Comando extra para extrair ou leer arquivo binario en linux
         
         hexdump -C nome_do_arquivo.bin
+
+
+
+
+
+
+
+
+
+		      text
+loop: LDR i
+      SUB v5
+      JEQ fim
+      STR i
+      JMP loop       
+      SUB v5
+fim:  HLT
+
+      data
+i:    byte 50
+v5:   byte 5
+v5:   byte 7
