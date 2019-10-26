@@ -1,4 +1,5 @@
 env/*
 *.bin
 Trash.txt
+data.txt
 .vscode/
