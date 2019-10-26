@@ -212,8 +212,7 @@ class GenericAplication():
                             # Oseja vai dar uma exeção baseandose em que o comando nao existe                                                           
                             if l.split() != 'text' and g != 'byte' and g != 'data':
                                 self.__conjInstrucoes(g.strip()) 
-                                    
-                                                
+                                                                                    
                         if l.split()[0] == 'text':
                             achouText = True
                             if len(l.split()) > 1:                                     

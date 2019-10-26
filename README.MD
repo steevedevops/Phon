@@ -4,6 +4,45 @@ This is an application called Phon, its operation is to translate .asm file of p
 ###### Portugues Description
 Esta é uma aplicação chamada Phon, sua operação é traduzir o arquivo .asm do ph1 para a saída de um arquivo binário com exatamente 256 bytes. Para usar este aplicativo é fácil, basta instalar algumas coisas.
 
+### Como programar o arquivo 'data.asm'
+O arquivo .asm que va a ser colocado as instruções PH1 ele ten que ter os siguentes padrão
+* Não pode ter espaço sobrando no arquivo
+
+Un exemplo do codigo padrão do arquivo '.asm' e como se deve colocar as instruções.
+#### Forma Correcta
+```
+text 
+loop: LDR i
+    SUB v5
+    JEQ fim
+    STR i
+    JMP loop       
+    SUB v5
+fim:  HLT
+    data
+i:    byte 50
+v5:   byte 5
+
+```
+
+
+#### Forma errada
+```
+text 
+loop: LDR i
+    SUB v5
+    JEQ fim
+    STR i
+    JMP loop       
+    SUB v5
+
+fim:  HLT
+    data
+i:    byte 50
+v5:   byte 5
+```
+
+
 
 ## Requisitos para poder rodar o app
 
@@ -27,9 +66,9 @@ Esta é uma aplicação chamada Phon, sua operação é traduzir o arquivo .asm 
 * Se você quiser usar o ambiente separado, faça o seguinte.
 
 ```						
-	   python3 -m venv env  ou  virtualenv -p python3 env	   
-	   source env/bin/activate
-       pip install -r requirement.txt
+	python3 -m venv env  ou  virtualenv -p python3 env	   
+	source env/bin/activate
+    pip install -r requirement.txt
 ```
 
 ## Uso
@@ -64,25 +103,3 @@ Para executar o aplicativo, você deve executar os seguintes comandos
 *   Comando extra para extrair ou leer arquivo binario en linux
         
         hexdump -C nome_do_arquivo.bin
-
-
-
-
-
-
-
-
-
-		      text
-loop: LDR i
-      SUB v5
-      JEQ fim
-      STR i
-      JMP loop       
-      SUB v5
-fim:  HLT
-
-      data
-i:    byte 50
-v5:   byte 5
-v5:   byte 7
